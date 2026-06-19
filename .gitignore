@@ -1,0 +1,6 @@
+# Зависимости 
+node_modules/ 
+.env 
+dist/ 
+build/ 
+*.log 
