@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн система семинаров</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Онлайн система семинаров</h1>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number">{{ statistics.total_seminars }}</span>
+                <span class="stat-label">Всего семинаров</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ statistics.total_participants }}</span>
+                <span class="stat-label">Всего участников</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ statistics.upcoming_seminars }}</span>
+                <span class="stat-label">Предстоящих</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ statistics.full_seminars }}</span>
+                <span class="stat-label">Заполнены</span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="/add_seminar" class="btn btn-add">➕ Добавить семинар</a>
+        </div>
+
+        <div class="search">
+            <form action="/search" method="GET" class="search-form">
+                <input type="text" name="q" placeholder="Поиск семинаров..." class="search-input">
+                <button type="submit" class="btn btn-search">🔍 Найти</button>
+            </form>
+        </div>
+
+        {% if seminars %}
+            <ul class="seminar-list">
+                {% for s in seminars %}
+                <li>
+                    <a href="/seminar/{{ s.id }}" class="seminar-link">
+                        <strong>{{ s.title }}</strong>
+                    </a>
+                    <span class="speaker">{{ s.speaker }}</span>
+                    <span class="date">{{ s.date[:10] if s.date else 'Нет даты' }}</span>
+                    <span class="count">👥 {{ s.participants_count }}</span>
+                    {% if s.is_full %}
+                        <span class="badge full">Заполнен</span>
+                    {% elif s.is_upcoming %}
+                        <span class="badge upcoming">Скоро</span>
+                    {% else %}
+                        <span class="badge past">Прошел</span>
+                    {% endif %}
+                    <div class="item-actions">
+                        <a href="/edit_seminar/{{ s.id }}" class="btn btn-small btn-edit">✏️</a>
+                        <form method="POST" action="/delete_seminar/{{ s.id }}" style="display:inline;" onsubmit="return confirm('Удалить семинар?');">
+                            <button type="submit" class="btn btn-small btn-delete">🗑️</button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty">Пока нет семинаров. Добавьте первый!</p>
+        {% endif %}
+    </div>
+</body>
+</html>

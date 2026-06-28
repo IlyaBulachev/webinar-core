@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать семинар</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <a href="/seminar/{{ seminar.id }}" style="display: inline-flex; align-items: center; gap: 8px; color: var(--primary); text-decoration: none; font-weight: 500; margin-bottom: 20px;">
+            ← Назад к семинару
+        </a>
+
+        <div class="form-card">
+            <h1 style="font-size: 28px; margin-bottom: 8px;">✏️ Редактировать семинар</h1>
+            <p style="color: #94a3b8; margin-bottom: 24px;">Обновите информацию о семинаре</p>
+
+            {% if error %}
+                <div class="alert alert-error">❌ {{ error }}</div>
+            {% endif %}
+
+            <form method="POST">
+                <div class="form-group">
+                    <label class="form-label">Название семинара *</label>
+                    <input type="text" name="title" value="{{ seminar.title }}" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Спикер *</label>
+                    <input type="text" name="speaker" value="{{ seminar.speaker }}" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Дата проведения *</label>
+                    <input type="date" name="date" value="{{ seminar.date[:10] if seminar.date else '' }}" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Максимум участников</label>
+                    <input type="number" name="max_participants" value="{{ seminar.max_participants }}" min="1" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Описание</label>
+                    <textarea name="description" class="form-control">{{ seminar.description }}</textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Сохранить изменения</button>
+                    <a href="/seminar/{{ seminar.id }}" class="btn" style="background: #e2e8f0; color: #1a1a2e; flex: 0.5; text-align: center;">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

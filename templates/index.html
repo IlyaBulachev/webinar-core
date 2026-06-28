@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн система семинаров</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <span class="header-icon">📚</span>
+                <div>
+                    <h1>Система семинаров</h1>
+                    <div class="header-subtitle">Управляйте своими семинарами эффективно</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="/add_seminar" class="btn btn-primary">➕ Новый семинар</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-icon">📋</span>
+            <span class="stat-number">{{ statistics.total_seminars }}</span>
+            <span class="stat-label">Всего семинаров</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">👥</span>
+            <span class="stat-number">{{ statistics.total_participants }}</span>
+            <span class="stat-label">Всего участников</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">⏳</span>
+            <span class="stat-number">{{ statistics.upcoming_seminars }}</span>
+            <span class="stat-label">Предстоящих</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">📌</span>
+            <span class="stat-number">{{ statistics.full_seminars }}</span>
+            <span class="stat-label">Заполнены</span>
+        </div>
+    </div>
+
+    <!-- ACTION BAR -->
+    <div class="action-bar">
+        <form action="/search" method="GET" class="search-form">
+            <input type="text" name="q" placeholder="🔍 Поиск семинаров..." class="search-input">
+            <button type="submit" class="btn btn-primary btn-sm">Найти</button>
+        </form>
+        <span style="color: #94a3b8; font-size: 14px;">
+            Всего: <strong>{{ seminars|length }}</strong>
+        </span>
+    </div>
+
+    <!-- SEMINAR LIST -->
+    {% if seminars %}
+        <ul class="seminar-list">
+            {% for s in seminars %}
+            <li class="seminar-item">
+                <div class="seminar-info">
+                    <div class="seminar-icon">🎓</div>
+                    <div>
+                        <a href="/seminar/{{ s.id }}" class="seminar-title">{{ s.title }}</a>
+                        <div class="seminar-meta">
+                            <span>👤 {{ s.speaker }}</span>
+                            <span>📅 {{ s.date[:10] if s.date else 'Нет даты' }}</span>
+                            <span>👥 {{ s.participants_count }}</span>
+                            {% if s.is_full %}
+                                <span class="badge badge-full">Заполнен</span>
+                            {% elif s.is_upcoming %}
+                                <span class="badge badge-upcoming">Скоро</span>
+                            {% else %}
+                                <span class="badge badge-past">Прошел</span>
+                            {% endif %}
+                            {% if s.participants_count >= 10 %}
+                                <span class="badge badge-popular">🔥 Популярный</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="seminar-actions">
+                    <a href="/seminar/{{ s.id }}" class="btn btn-primary btn-sm">Открыть</a>
+                    <a href="/edit_seminar/{{ s.id }}" class="btn btn-warning btn-sm">✏️</a>
+                    <form method="POST" action="/delete_seminar/{{ s.id }}" style="display:inline;" onsubmit="return confirm('Удалить семинар «{{ s.title }}»?');">
+                        <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>Нет семинаров</h3>
+            <p>Создайте свой первый семинар, чтобы начать</p>
+            <a href="/add_seminar" class="btn btn-primary">➕ Создать семинар</a>
+        </div>
+    {% endif %}
+</body>
+</html>

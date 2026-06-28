@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ seminar.title }} | Система семинаров</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!-- Навигация -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+            <a href="/" style="display: inline-flex; align-items: center; gap: 8px; color: var(--primary); text-decoration: none; font-weight: 500;">
+                ← Назад к списку
+            </a>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <a href="/edit_seminar/{{ seminar.id }}" class="btn btn-warning">✏️ Редактировать</a>
+                <form method="POST" action="/delete_seminar/{{ seminar.id }}" style="display:inline;" onsubmit="return confirm('Удалить семинар «{{ seminar.title }}»?');">
+                    <button type="submit" class="btn btn-danger">🗑️ Удалить</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Заголовок -->
+        <div class="detail-header">
+            <div>
+                <h1 class="detail-title">{{ seminar.title }}</h1>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px;">
+                    {% if seminar.is_upcoming %}
+                        <span class="badge badge-upcoming" style="font-size: 14px; padding: 4px 16px;">⏳ Скоро</span>
+                    {% elif seminar.is_full %}
+                        <span class="badge badge-full" style="font-size: 14px; padding: 4px 16px;">📌 Заполнен</span>
+                    {% else %}
+                        <span class="badge badge-past" style="font-size: 14px; padding: 4px 16px;">✅ Прошел</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация -->
+        <div class="detail-meta">
+            <div class="detail-meta-item">
+                <span class="label">👤 Спикер</span>
+                <span class="value">{{ seminar.speaker }}</span>
+            </div>
+            <div class="detail-meta-item">
+                <span class="label">📅 Дата</span>
+                <span class="value">{{ seminar.date[:10] if seminar.date else 'Не указана' }}</span>
+            </div>
+            <div class="detail-meta-item">
+                <span class="label">👥 Участники</span>
+                <span class="value">{{ seminar.participants_count }} / {{ seminar.max_participants }}</span>
+            </div>
+            <div class="detail-meta-item">
+                <span class="label">📊 Статус</span>
+                <span class="value">
+                    {% if seminar.is_full %}
+                        <span style="color: #dc2626;">Заполнен</span>
+                    {% elif seminar.is_upcoming %}
+                        <span style="color: #16a34a;">Открыт</span>
+                    {% else %}
+                        <span style="color: #64748b;">Завершен</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Описание -->
+        {% if seminar.description %}
+            <div class="detail-description">
+                {{ seminar.description }}
+            </div>
+        {% endif %}
+
+        <!-- Участники -->
+        <h2 style="margin: 32px 0 12px; font-size: 22px;">👥 Участники</h2>
+        {% if seminar.participants %}
+            <ul class="participants-grid">
+                {% for p in seminar.participants %}
+                    <li class="participant-chip">
+                        <span class="participant-avatar">{{ p.name[0]|upper }}</span>
+                        <span class="participant-name">{{ p.name }}</span>
+                        {% if p.email %}
+                            <span class="participant-email">({{ p.email }})</span>
+                        {% endif %}
+                        <form method="POST" action="/unregister/{{ seminar.id }}" style="display:inline;">
+                            <input type="hidden" name="name" value="{{ p.name }}">
+                            <button type="submit" class="btn btn-danger btn-sm" style="padding: 2px 8px; font-size: 12px;" onclick="return confirm('Отменить регистрацию {{ p.name }}?');">✕</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-state" style="padding: 30px;">
+                <p style="color: #94a3b8;">Пока никто не зарегистрировался. Будьте первым! 🎯</p>
+            </div>
+        {% endif %}
+
+        <!-- Регистрация -->
+        <div style="margin-top: 32px; background: #f8fafc; padding: 24px; border-radius: var(--radius-md); border: 1px solid #e8ecf4;">
+            <h3 style="font-size: 18px; margin-bottom: 16px;">📝 Записаться на семинар</h3>
+            {% if seminar.is_full %}
+                <div class="alert alert-error">❌ Семинар заполнен. Максимум {{ seminar.max_participants }} участников.</div>
+            {% elif not seminar.is_upcoming %}
+                <div class="alert alert-error">❌ Семинар уже прошел. Регистрация закрыта.</div>
+            {% else %}
+                <form method="POST" action="/register/{{ seminar.id }}" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <input type="text" name="name" placeholder="Ваше имя" required class="form-control" style="flex: 1; min-width: 180px;">
+                    <input type="email" name="email" placeholder="Email (опционально)" class="form-control" style="flex: 1; min-width: 180px;">
+                    <button type="submit" class="btn btn-success">✅ Записаться</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
