@@ -8,35 +8,49 @@
 
 ## Технологии
 
-- **Язык:** Python 3
-- **Фреймворк:** Flask
-- **База данных:** SQLite (файл `seminars.db`)
-- **ORM:** SQLAlchemy
-- **Шаблоны:** Jinja2
-- **Стили:** CSS
+- Язык: Python 3
+- Фреймворк: Flask
+- База данных: SQLite (файл seminars.db)
+- ORM: SQLAlchemy
+- Шаблоны: Jinja2
+- Стили: CSS
 
 ## Структура проекта
-├── app.py # Главный файл приложения
-├── requirements.txt # Зависимости Python
-├── seminars.db # База данных (создаётся автоматически)
-├── core/ # Ядро системы
+├── app.py
+├── requirements.txt
+├── seminars.db
+├── core/
 │ ├── init.py
-│ ├── models.py # Модели данных
-│ ├── services.py # Бизнес-логика
-│ ├── repository.py # Работа с базой данных
-│ ├── database.py # Подключение к БД
-│ └── exceptions.py # Обработка ошибок
-├── templates/ # HTML шаблоны
-│ ├── index.html # Список семинаров
-│ ├── seminar.html # Просмотр семинара
-│ ├── add_seminar.html # Добавление семинара
-│ └── edit_seminar.html # Редактирование
-└── static/ # Статические файлы
-└── style.css # Стили
-## Установка и запуск
+│ ├── models.py
+│ ├── services.py
+│ ├── repository.py
+│ ├── database.py
+│ └── exceptions.py
+├── templates/
+│ ├── index.html
+│ ├── seminar.html
+│ ├── add_seminar.html
+│ └── edit_seminar.html
+└── static/
+└── style.css##
+Установка и запуск
 
-### 1. Клонировать репозиторий
-
-```bash
+1. Клонировать репозиторий:
 git clone https://github.com/IlyaBulachev/webinar-core.git
 cd webinar-core
+2. Установить зависимости:
+pip install -r requirements.txt
+3. Запустить приложение:
+python app.py
+4. Открыть в браузере: http://127.0.0.1:5000/
+
+## Основные функции
+
+- Просмотр списка семинаров
+- Добавление нового семинара
+- Редактирование семинара
+- Удаление семинара
+
+## Автор
+
+Булачев Илья Александрович, 2026 г.
